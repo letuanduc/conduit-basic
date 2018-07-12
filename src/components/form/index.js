@@ -15,7 +15,10 @@ class Form extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    
   }
+
+  
 
   handleChange(event) {
     const target = event.target;
@@ -55,13 +58,13 @@ class Form extends Component {
   }
 
   handleSubmit(event) {
-    console.log('submit',event);
     event.preventDefault();
+    console.log('submit',event.target.email.value);
   }
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <ul class="error-messages">
+        <ul className="error-messages">
           <FormErrors formErrors={this.state.formErrors}></FormErrors>
         </ul>
         <fieldset className="form-group">
