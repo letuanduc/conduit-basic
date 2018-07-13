@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import FormErrors from './formErrors';
+import { Route, Redirect } from 'react-router'
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -7,7 +8,7 @@ class Form extends Component {
       name: '',
       email: '',
       password: '',
-      formErrors: {name: '',email: '', password: ''},
+      formErrors: { name: '', email: '', password: '' },
       nameValid: false,
       emailValid: false,
       passwordValid: false,
@@ -15,23 +16,23 @@ class Form extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    
+
   }
 
-  
+
 
   handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    this.setState({[name]: value}, () => {
+    this.setState({ [name]: value }, () => {
       this.validateField(name, value);
     })
   }
 
   validateField(inputName, value) {
     let fieldValidationErrors = this.state.formErrors;
-    switch(inputName) {
+    switch (inputName) {
       case 'name':
         this.state.nameValid = value.length > 0;
         fieldValidationErrors.name = this.state.nameValid ? '' : 'is required';
@@ -41,9 +42,9 @@ class Form extends Component {
         fieldValidationErrors.email = this.state.emailValid ? '' : 'is invalid';
         break;
       case 'password':
-        this.state.passwordValid = value.length >= 6;
+        this.state.passwordValid = value.length >= 8;
         fieldValidationErrors.password = this.state.passwordValid ? '' : 'is too short';
-      break;
+        break;
     }
     this.setState({
       formErrors: fieldValidationErrors,
@@ -54,12 +55,34 @@ class Form extends Component {
   }
 
   validateForm() {
-    this.setState({formValid : this.state.nameValid && this.state.emailValid && this.state.passwordValid });
+    this.setState({ formValid: this.state.nameValid && this.state.emailValid && this.state.passwordValid });
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    console.log('submit',event.target.email.value);
+    let url = 'https://conduit.productionready.io/api/' + 'users';
+    let param = {
+      user: {
+        username: event.target.name.value,
+        email: event.target.email.value,
+        password: event.target.password.value,
+      }
+    }
+    return fetch(url, {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, cors, *same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, same-origin, *omit
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(param),
+    })
+      .then(res => {
+        <Redirect to="/" />
+      })
+      .catch(error => console.log('Fetch data error', error));
   }
   render() {
     return (
